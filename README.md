@@ -9,36 +9,32 @@
    * [Di confronto](#di-confronto)
    * [Logici](#logici)
    * [Altri](#altri)
-3. [Dichiarazioni](#dichiarazioni)
-4. [Funzioni](#funzioni)
+3. Todo...
 
-   * [Funzioni come valori e closure](#funzioni-come-valori-e-closure)
-   * [Funzioni variadiche](#funzioni-variadiche)
-5. [Tipi built-in](#tipi-built-in)
-6. [Conversioni di tipo](#conversioni-di-tipo)
-7. [Package](#package)
-8. [Strutture di controllo](#strutture-di-controllo)
+# Crediti
 
-   * [If](#if)
-   * [Cicli](#cicli)
-   * [Switch](#switch)
-9. [Array, Slice, Range](#array-slice-range)
-
-   * [Array](#array)
-   * [Slice](#slice)
-   * [Operazioni su array e slice](#operazioni-su-array-e-slice)
-10. [Mappe](#mappe)
-11. [Struct](#struct)
-12. [Puntatori](#puntatori)
-13. Todo...
-
-## Crediti
-
-- La maggior parte degli esempi di codice è tratta da [A Tour of Go](http://tour.golang.org/), che è un’eccellente introduzione a Go.
+- [A Tour of Go](http://tour.golang.org/).
+- [a8m/golang-cheat-sheet](https://github.com/a8m/golang-cheat-sheet)
 - Il minimo necessario per il corso di Programmazione I.
 
 
 ----
+# Comandi da Terminale
+
+
+Creare l'eseguibile
+`$ go build nomeprogetto.go `
+
+Esecuzione
+`$ go run nomeprogetto.go`
+
+Documentazione
+`$ go doc nomecomando`
+
+`$ go test -run TestNome`
+
+
+---
 # Sintassi di base
 
 ## Hello World
@@ -54,8 +50,8 @@ func main() {
     fmt.Println("Hello Go")
 }
 ```
-Esecuzione
-`$ go run hello.go`
+
+
 
 ## Operatori
 
@@ -114,16 +110,6 @@ var foo = 42                 // tipo omesso, inferito
 foo := 42                    // shorthand, solo nei corpi delle funzioni
 const constant = "This is a constant"
 
-// iota può essere usato per numeri incrementali, a partire da 0
-const (
-    _ = iota
-    a
-    b
-    c = 1 << iota
-    d
-)
-fmt.Println(a, b) // 1 2
-fmt.Println(c, d) // 8 16
 ```
 
 ## Tipi built-in
@@ -131,13 +117,10 @@ fmt.Println(c, d) // 8 16
 ```go
 bool
 string
-
 int  int8  int16  int32  int64
 uint uint8 uint16 uint32 uint64 uintptr
-
-byte   // alias di uint8
-rune   // alias di int32 ≈ carattere Unicode
-
+byte 
+rune   
 float32 float64
 complex64 complex128
 ```
@@ -174,12 +157,13 @@ In Go esiste solo `for`.
 for i := 0; i < 10; i++ {}
 for i < 10 {}
 for {}
+for i,c := range s {} // i prende in input la posizione e c il carattere (della stringa o array)
 ```
 
 ### Switch
 
 ```go
-switch os := runtime.GOOS; os {
+switch os {
 case "darwin":
     fmt.Println("Mac OS")
 case "linux":
@@ -203,8 +187,11 @@ a := [...]int{1, 2}
 ## Slice
 
 ```go
-a := []int{1, 2, 3}
+a := []int
+a = make([]int, 4)
 a = append(a, 4)
+s = a[2:4]//diventa una sottostringa di a che parte dalla posizione 2 alla posizione 4-1
+
 ```
 
 ## Operazioni
@@ -306,7 +293,9 @@ type Vertex struct {
 # Gestione I/O Command Line
 
 ## os
-
+```go
+args = os.Args //args è una slice di valori di tipo strnga lette dalla barra dei comandi
+```
 ## bufio
 
 ---
@@ -320,6 +309,9 @@ type Vertex struct {
 
 ## unicode
 
+## strconv
+
+
 
 
 
@@ -328,5 +320,7 @@ type Vertex struct {
 ## Puntatori
 
 ```go
-p := &Vertex{1, 2}
+var p *int //dichiarazione
+p = &x //referenziazione
+x = *p //deferenziazione
 ```
