@@ -386,6 +386,7 @@ S = strings.ToUpper(S) //rende la stringa tutta maiuscola
 Slice := strings.Split(s, “;”) //divide una stringa in slice ogni volta che c’è un ;
 strings.Contains(s, “;”) //restituisce vero se la stringa s contiene il carattere ;
 string.Repeat(<variabile string>, <variabile int>) //restituisce una nuova stringa composta da un numero di coppie della variabile string (esempio se c’è a e 3 restituirà aaa)
+strings.Fields(<variabile string>) //elimina automaticamente gli spazi vuoti
 ```
 
 ---
