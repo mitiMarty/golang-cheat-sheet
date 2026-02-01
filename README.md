@@ -157,8 +157,9 @@ if a := b + c; a < 42 {
 In Go esiste solo `for`.
 
 ```go
-for i := 0; i < 10; i++ {}
-for i < 10 {}
+for i := 0; i < 10; i++ {} // for solito
+for ; i < 10 {} // while
+for i < 10 {} // si può omettere ; se c'è una sola condizione
 for {}
 for i,c := range s {} // i prende in input la posizione e c il carattere (della stringa o array)
 ```
@@ -183,25 +184,61 @@ default:
 ## Array
 
 ```go
-var a [10]int
-a := [...]int{1, 2}
+var a [10]int // array di lunghezza 10
+a[3] = 42 // setta l'elemento di indice 3 al valore 42
+i := a[3] // legge l'elemento di indice 3
+
+// dichiara e inizializza
+var a = [2]int{1, 2} // array di due elementi inizializzato a (1,2)
+a := [2]int{1, 2} // come prima ma abbreviato
+a := [...]int{1, 2} // ... il compilatore si rende conto della lunghezza
 ```
 
 ## Slice
+Uno slice è come un array ma la lunghezza non è specificata
+
 ```go
-a := []int
-a = make([]int, 4)
-a = append(a, 4)
+a := []int // dichiaro uno slice di interi
+var a = []int{1,2,3,4} // dichiaro e inizializzo uno slice
+a := []int{1,2,3,4} // versione abbreviata
+chars := []string{ 0:"a", 2:"c", 1:"b"} // ["a","b","c"]
+
 s = a[2:4]//diventa una sottostringa di a che parte dalla posizione 2 alla posizione 4-1
+s = a[:3] // se non dichiaro l'indice a sinistra parte da 0
+s = a[2:] // se non indico l'indice a destra va fino a len(a)-1
+
+// Creare un array con il make
+a = make([]int, 4) // il numero è la lunghezza
+a = append(a, 4)
+
+// Creare uno slice partendo da un array
+x := [3]string{"uno","due","tre"}
+s := x[:] // copia il contenuto di x in uno slice
+
 ```
 
-## Matrice
+## Operazioni
+
+L'operazione lunghezza è built-in. è definita su array, slice e stringhe
+
 ```go
-M = make([][]int, nRighe) //alloca prima le righe
-for i := 0; i < nRighe; i++ {
-    M[i] = make([]int, nColonne) //e poi le colonne
+l = len(s)
+```
+
+ciclo sugli elementi di array/slices/stringhe
+```go
+for i, e := range a { 
+    // i indice, e elemento
 }
-M[riga][colonna] = valore //assegna un valore
+
+for _. e := range a {
+    // e elemento
+}
+
+for i := range a {
+    // i indice
+}
+
 ```
 
 ## Mappe
@@ -209,45 +246,38 @@ M[riga][colonna] = valore //assegna un valore
 Var m map[string]int //dichiarazione
 m := make(map[string]int)
 m["key"] = 42
-v,ok = m["key"] //nella variabile v viene memorizzato il valore e la variabile ok è vera se all'interno di m["key"] c'è un valore, false altrimenti
-delete(m, “key”) //elimina il valore associato a key
 ```
 
-## Struct
-```go
-Var <nome struct> struct{
-	<nome variabile1> <tipo>
-	<nome variabile2><tipo>
-}
-<nome struct>.<nome variabile1> = <valore> //per assegnare alla variabile un valore o per accedere alla variabile
-```
 
-## Type
-```go
-Type celsius = int32 //crea un alias di un tipo
-var x celsius
-```
+## Libreria: sort
+
 
 ---
 
 # Funzioni
 
 ```go
+// no argomenti
 func functionName() {}
 
+// due argomenti 
 func functionName(param1 string, param2 int) {}
 
+// argomenti multipli dello stesso tipo int
 func functionName(param1, param2 int) {}
 
+// no argomenti e dichiarazione del return type
 func functionName() int {
     return 42
 }
 
+// no argomenti, return type può essere più di un valore
 func returnMulti() (int, string) {
     return 42, "foobar"
 }
 var x, str = returnMulti()
 
+// le variabili di return possono essere nominate nella dichiarazione
 func returnMulti2() (n int, s string) {
     n = 42
     s = "foobar"
@@ -257,16 +287,55 @@ var x, str = returnMulti2()
 ```
 
 ## Funzioni come valori e closure
-
+Una funzione può essere anche definita come una variabile di tipo func
 ```go
-add := func(a, b int) int {
-    return a + b
+func main() {
+    // add è una variabile di tipo funzione
+    add := func(a, b int) int {
+        return a + b
+    }
+    // basta usare il nome per chiamare la funzione
+    fmt.Println(add(3, 4))
 }
+
 ```
 
 Le closure sono lessicalmente scoping: possono accedere a variabili definite nello scope esterno.
 
+
+
+Closures, lexically scoped: 
+le funzioni possono accedere a valori che erano nello scope quando si stava definendo la funzionen
+
+```go
+func scope() func() int{
+    outer_var := 2
+    foo := func() int { return outer_var}
+    return foo
+}
+
+func another_scope() func() int{
+    // ERRORE: non compila perchè outer_var e foo non sono definite in questo scope
+    outer_var = 444
+    return foo
+}
+```
+
+Closures: non mutare le outer_var, è meglio ridefinire le variabili esterne 
+```go
+func outer() (func() int, int) {
+    outer_var := 2       // NOTE outer_var è fuori dallo scope interno
+    inner := func() int {
+        outer_var += 99  // prova a mutare outer_var
+        return outer_var // => 101 (ma outer_var è nuovamente ridefinita come una variabile visibile solo nello scope interno
+    }
+    return inner, outer_var // => 101, 2 (invariato!)
+}
+```
+
 ## Funzioni variadiche
+usando  ... prima del type name dell'ultimo paramento significa che può prendere un numero variabile (anche zero) di input di quel tipo.
+
 
 ```go
 func adder(args ...int) int {
@@ -277,6 +346,10 @@ func adder(args ...int) int {
     return total
 }
 ```
+ 
+La funzione è invocata sempre nello stesso modo solo che ora puoi passare il numero di argomenti che vuoi.
+
+
 
 ---
 # Struct
@@ -302,9 +375,18 @@ type Vertex struct {
 # Gestione stringhe
 
 ## Libreria: strconv
-
+```go
+strconv.Atoi(stringa) //prende in input una stringa e restituisce un valore intero e un valore di controllo, se la conversione è andata a buon fine è nil
+strconv.ParseFloat(stringa, precisione del float (32 o 64)) //trasforma una stringa in un valore float
+strconv.Itoa(intero) //prende in input un intero e restituisce una stringa
+```
 ## Libreria: strings
-
+```go
+S = strings.ToUpper(S) //rende la stringa tutta maiuscola
+Slice := strings.Split(s, “;”) //divide una stringa in slice ogni volta che c’è un ;
+strings.Contains(s, “;”) //restituisce vero se la stringa s contiene il carattere ;
+string.Repeat(<variabile string>, <variabile int>) //restituisce una nuova stringa composta da un numero di coppie della variabile string (esempio se c’è a e 3 restituirà aaa)
+```
 
 ---
 # Gestione I/O Command Line
@@ -351,19 +433,6 @@ Time.now().UnixNano() //è l’ora in cui si lancia il programma
 unicode.IsLetter() //restituisce vero se la rune in input è una lettera
 unicode.IsDigit() //restituisce vero se la rune in input è un numero
 unicode.IsSpace() //restituisce vero se la rune in input è uno spazio vuoto
-```
-## strings
-```go
-S = strings.ToUpper(S) //rende la stringa tutta maiuscola
-Slice := strings.Split(s, “;”) //divide una stringa in slice ogni volta che c’è un ;
-strings.Contains(s, “;”) //restituisce vero se la stringa s contiene il carattere ;
-string.Repeat(<variabile string>, <variabile int>) //restituisce una nuova stringa composta da un numero di coppie della variabile string (esempio se c’è a e 3 restituirà aaa)
-```
-## strconv
-```go
-strconv.Atoi(stringa) //prende in input una stringa e restituisce un valore intero e un valore di controllo, se la conversione è andata a buon fine è nil
-strconv.ParseFloat(stringa, precisione del float (32 o 64)) //trasforma una stringa in un valore float
-strconv.Itoa(intero) //prende in input un intero e restituisce una stringa
 ```
 ## sort
 ```go
