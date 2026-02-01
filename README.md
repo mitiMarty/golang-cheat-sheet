@@ -188,7 +188,6 @@ a := [...]int{1, 2}
 ```
 
 ## Slice
-
 ```go
 a := []int
 a = make([]int, 4)
@@ -337,7 +336,7 @@ math.Sqrt(<variabile>) //calcola la radice quadrata della variabile
 
 ## Math/Rand
 ```go
-Rand.Seed(time.Now().UnixNano()) //questa funzione fa partire il random da un seme, noi in questo caso usiamo il tempo perché cambia ogni volta che lancio il programma  
+rand.Seed(int64(time.Now().Nanosecond())) //questa funzione fa partire il random da un seme, noi in questo caso usiamo il tempo perché cambia ogni volta che lancio il programma  
 Rand.Intn(N) //genera un numero casuale da 0 a N (escluso) 
 Rand.Float64() //genera un numero random float
 Limite1 + rand.Float64()*(limite2-limite1) // genera un numero random con dei limiti specifici
