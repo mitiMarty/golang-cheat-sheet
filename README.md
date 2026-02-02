@@ -439,6 +439,7 @@ unicode.IsSpace() //restituisce vero se la rune in input è uno spazio vuoto
 ```go
 sort.Strings(s) //prende in input una slice di stringhe e la restituisce ordinata
 sort.Ints(i) //prende in input una slice di interi e la restituisce ordinata
+sort.Sort(sort.Reverse(sort.IntSlice(numeri))) //restituisce una slice in ordine decrescente
 ```
 ## reflect
 ```go
