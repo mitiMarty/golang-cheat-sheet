@@ -454,3 +454,18 @@ func ÈPrimo(n int) bool {
 	return true
 }
 ```
+
+## Ordinamento rune
+```go
+func SortRunes(a []rune) {
+    for i:=0;i<len(a)-1;i++{
+        indiceMin := i
+        for j := i + 1; j<len(a); j++ {
+            if a[indiceMin] > a[j] {
+            indiceMin = j
+            }
+        }
+        a[i], a[indiceMin] = a[indiceMin], a[i]
+    }
+}
+```
