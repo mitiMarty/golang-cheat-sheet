@@ -469,3 +469,32 @@ func SortRunes(a []rune) {
     }
 }
 ```
+## Selezione di più stringhe da riga di comando
+```go
+func main() {
+	parole := os.Args[1:]	// Creo una slice di stringhe: parto da 1, args[0] è il nome del programma
+
+	if len(parole) == 0 {
+		return	// Se ci son 0 stringhe, return
+	}
+
+	for i, parola := range parole {    // i = indice stringa (Es: 1), parola = valore stringa ("Es: ciao")
+		// Codice richiesto...
+	}
+	fmt.Println()
+}
+```
+
+## Iterazione su chars (da stringa)
+```go
+chars := []rune(parola)
+
+for i := range chars {
+	if i%2 == 1 {	// Converte caratteri alternati
+		chars[i] = unicode.ToUpper(chars[i])	// a -> A
+	}
+}
+```
+
+
+	
