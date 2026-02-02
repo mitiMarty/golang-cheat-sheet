@@ -456,3 +456,16 @@ var p *int //dichiarazione
 p = &x //referenziazione
 x = *p //deferenziazione
 ```
+---
+# Pezzi di codice che possono tornare utili 
+## Numeri primi
+```go
+func ÈPrimo(n int) bool {
+	for i:=1;i*i<=n;i++ {
+		if n%i==0{
+			return false
+		}
+	}
+	return true
+}
+```
