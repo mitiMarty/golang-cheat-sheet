@@ -440,9 +440,9 @@ unicode.IsSpace() //restituisce vero se la rune in input è uno spazio vuoto
 sort.Strings(s) //prende in input una slice di stringhe e la restituisce ordinata
 sort.Ints(i) //prende in input una slice di interi e la restituisce ordinata
 ```
-## slice
+## reflect
 ```go
-slices.Equal(a, b) //restituisce true se la slice a è uguale alla slice b
+reflect.DeepEqual(a, b) //restituisce true se la slice a è uguale alla slice b
 ```
 
 
