@@ -179,7 +179,7 @@ default:
 
 ---
 
-# Array, Slice, Range
+# Array, Slice, Matrici, Mappe
 
 ## Array
 
@@ -217,40 +217,25 @@ s := x[:] // copia il contenuto di x in uno slice
 
 ```
 
-## Operazioni
-
-L'operazione lunghezza è built-in. è definita su array, slice e stringhe
-
+## Matrici
 ```go
-l = len(s)
-```
-
-ciclo sugli elementi di array/slices/stringhe
-```go
-for i, e := range a { 
-    // i indice, e elemento
+M = make([][]int, nRighe) //alloca prima le righe
+for i := 0; i < nRighe; i++ {
+    M[i] = make([]int, nColonne) //e poi le colonne
 }
-
-for _. e := range a {
-    // e elemento
-}
-
-for i := range a {
-    // i indice
-}
+M[riga][colonna] = valore //assegna un valore
+var a [3][2]int = [3][2]int{{1, 2}, {10, 20}, {100, 200}} //viene creata e vengono assegnati i valori
 
 ```
 
 ## Mappe
 ```go
 Var m map[string]int //dichiarazione
-m := make(map[string]int)
-m["key"] = 42
+m := make(map[string]int) //allocazione
+m["key"] = 42 //assegnazione di un valore
+v, ok = m[“key”] //leggo il valore nella variabile v, e la variabile di controllo ok è vera se quella chiave è stata associata ad un valore, falsa altrimenti
+delete(m, “key”) //elimina il valore contrassegnato dal nome key
 ```
-
-
-## Libreria: sort
-
 
 ---
 
@@ -461,7 +446,7 @@ x = *p //deferenziazione
 ## Numeri primi
 ```go
 func ÈPrimo(n int) bool {
-	for i:=1;i*i<=n;i++ {
+	for i:=2;i*i<=n;i++ {
 		if n%i==0{
 			return false
 		}
