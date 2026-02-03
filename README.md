@@ -54,8 +54,7 @@ func main() {
 }
 ```
 
-
-
+---
 ## Operatori
 
 ### Aritmetici
@@ -101,6 +100,7 @@ func main() {
 | `*`       | dereferenzia un puntatore                    |
 | `<-`      | operatore di invio / ricezione (vedi Canali) |
 
+---
 ## Dichiarazioni
 
 Il tipo viene dopo l’identificatore.
@@ -130,7 +130,7 @@ complex64 complex128
 
 Tutti gli identificatori predefiniti sono definiti nel package [builtin](https://golang.org/pkg/builtin/).
 
-
+---
 
 ## Conversioni di tipo
 
@@ -141,8 +141,42 @@ var u uint = uint(f)
 var r rune = []rune(stringa)[0]
 ```
 
+---
+## Formattazione (fmt)
 
+```go
+import "fmt"
 
+fmt.Print("Testo senza a capo")
+fmt.Println("Testo con a capo finale")
+
+// Printf: Stampa formattata (NON va a capo da solo, serve \n)
+fmt.Printf("Il valore è %d\n", x)
+
+// Sprintf: Non stampa, ma crea una stringa formattata
+s := fmt.Sprintf("Risultato: %.2f", 10.555)
+```
+
+### Verbi principali per Printf
+
+|Simbolo|Descrizione|Esempio Input|Output|
+|---|---|---|---|
+|**Generici**||||
+|`%v`|Valore generico (ottimo se non ricordi il tipo)|`10` o `"ciao"`|`10`|
+|`%+v`|**Struct con nomi campi** (Salva-vita per il debug!)|`{X:1 Y:2}`|`{X:1 Y:2}`|
+|`%T`|Mostra il **Tipo** della variabile|`10`|`int`|
+|**Numeri**||||
+|`%d`|Intero (Base 10)|`123`|`123`|
+|`%f`|Float standard (6 decimali)|`10.5`|`10.500000`|
+|`%.2f`|Float arrotondato a 2 decimali|`10.567`|`10.57`|
+|`%t`|Booleano|`true`|`true`|
+|**Testo**||||
+|`%s`|Stringa semplice|`"ciao"`|`ciao`|
+|`%q`|Stringa "quotata" (con virgolette)|`"ciao"`|`"ciao"`|
+|`%c`|Rune (stampa il carattere dal codice numerico)|`65`|`A`|
+|`%p`|Puntatore (indirizzo di memoria)|`&x`|`0xc00...`|
+
+---
 ## Strutture di controllo
 
 ### If
@@ -215,10 +249,19 @@ a = append(a, 4)
 // Creare uno slice partendo da un array
 x := [3]string{"uno","due","tre"}
 s := x[:] // copia il contenuto di x in uno slice
+```
 
+### **Append**
+
+> **Attenzione:** `append` può cambiare l'indirizzo di memoria dello slice se supera la capacità. Bisogna sempre riassegnarlo alla variabile originale.
+
+```go
+s = append(s, nuovoElemento) // Corretto
+// append(s, nuovoElemento)  // SBAGLIATO (il risultato va perso)
 ```
 
 ## Matrici
+
 ```go
 M = make([][]int, nRighe) //alloca prima le righe
 for i := 0; i < nRighe; i++ {
@@ -226,16 +269,26 @@ for i := 0; i < nRighe; i++ {
 }
 M[riga][colonna] = valore //assegna un valore
 var a [3][2]int = [3][2]int{{1, 2}, {10, 20}, {100, 200}} //viene creata e vengono assegnati i valori
-
 ```
 
 ## Mappe
+
 ```go
 Var m map[string]int //dichiarazione
 m := make(map[string]int) //allocazione
 m["key"] = 42 //assegnazione di un valore
 v, ok = m[“key”] //leggo il valore nella variabile v, e la variabile di controllo ok è vera se quella chiave è stata associata ad un valore, falsa altrimenti
 delete(m, “key”) //elimina il valore contrassegnato dal nome key
+```
+
+### Iterazione
+
+> **Attenzione:** Quando usi `range` su una mappa, l'ordine è **casuale**. Non dare per scontato che stampi le chiavi in ordine alfabetico o di inserimento!
+
+```go
+for k, v := range mappa {
+    fmt.Println(k, v) // Ordine random
+}
 ```
 
 ---
@@ -336,6 +389,59 @@ func adder(args ...int) int {
 La funzione è invocata sempre nello stesso modo solo che ora puoi passare il numero di argomenti che vuoi.
 
 
+## Ricorsione
+
+Una funzione che chiama se stessa. **Importante:** Ricordarsi sempre il _caso base_ (condizione di uscita) altrimenti il programma va in loop infinito (stack overflow).
+
+```go
+// Esempio: Fattoriale (n!)
+// 5! = 5 * 4 * 3 * 2 * 1
+func Fattoriale(n int) int {
+    // 1. Caso Base: quando fermarsi
+    if n == 0 {
+        return 1
+    }
+    // 2. Passo Ricorsivo: chiamata a se stessa
+    return n * Fattoriale(n-1)
+}
+
+func main() {
+    fmt.Println(Fattoriale(5)) // Stampa 120
+}
+```
+
+### Fibonacci (Ricorsivo)
+
+La logica è:
+
+1. **Caso Base:** Se `n` è 0 o 1, restituisci `n`.
+    
+2. **Passo Ricorsivo:** Altrimenti, restituisci la somma di `Fib(n-1)` e `Fib(n-2)`.
+    
+
+```go
+package main
+
+import "fmt"
+
+// Funzione ricorsiva
+func Fibonacci(n int) int {
+    // Caso Base: condizione di arresto
+    if n <= 1 {
+        return n
+    }
+    // Passo Ricorsivo: chiamata a se stessa
+    return Fibonacci(n-1) + Fibonacci(n-2)
+}
+
+func main() {
+    // Esempio: stampiamo i primi 10 numeri della sequenza
+    for i := 0; i < 10; i++ {
+        fmt.Printf("%d ", Fibonacci(i))
+    }
+    // Output: 0 1 1 2 3 5 8 13 21 34 
+}
+```
 
 ---
 # Struct
@@ -344,6 +450,34 @@ La funzione è invocata sempre nello stesso modo solo che ora puoi passare il nu
 type Vertex struct {
     X, Y float64
 }
+```
+
+## Metodi (Funzioni legate alle Struct)
+
+A differenza delle funzioni normali, il metodo ha un "ricevitore" (receiver) tra `func` e il nome.
+
+```go
+type Rettangolo struct {
+    Base, Altezza float64
+}
+
+// Metodo "Area" legato alla struct Rettangolo
+// (r Rettangolo) è il ricevitore. Qui è per VALORE (copia)
+func (r Rettangolo) Area() float64 {
+    return r.Base * r.Altezza
+}
+
+// Metodo che MODIFICA la struct
+// Qui serve il PUNTATORE (*Rettangolo) altrimenti modificherei solo una copia
+func (r *Rettangolo) RaddoppiaDimensioni() {
+    r.Base = r.Base * 2
+    r.Altezza = r.Altezza * 2
+}
+
+// Utilizzo
+r := Rettangolo{10, 5}
+fmt.Println(r.Area()) // 50
+r.RaddoppiaDimensioni() // Ora r è {20, 10}
 ```
 
 ---
@@ -450,13 +584,16 @@ x = *p //deferenziazione
 # Pezzi di codice che possono tornare utili 
 ## Numeri primi
 ```go
-func ÈPrimo(n int) bool {
-	for i:=2;i*i<=n;i++ {
-		if n%i==0{
-			return false
-		}
-	}
-	return true
+func IsPrimo(n int) bool {
+    if n < 2 {
+        return false
+    }
+    for i := 2; i*i <= n; i++ { // Ottimizzazione radice quadrata
+        if n%i == 0 {
+            return false
+        }
+    }
+    return true
 }
 ```
 
@@ -474,6 +611,8 @@ func SortRunes(a []rune) {
     }
 }
 ```
+
+---
 ## Lettura da un file di testo contenuto nella stessa cartella dell'eseguibile
 ```go
 contenuto, err := os.ReadFile("dati.txt")
@@ -486,6 +625,18 @@ testo := string(contenuto)
 fmt.Println("Contenuto del file:")
 fmt.Println(testo)
 ```
+
+### Defer
+
+> Usalo subito dopo aver aperto un file per non dimenticarti di chiuderlo.
+
+```go
+f, err := os.Open("file.txt")
+if err != nil { return }
+defer f.Close() // Si chiuderà da solo alla fine della funzione
+```
+
+---
 ## Selezione di più stringhe da riga di comando
 ```go
 func main() {
@@ -513,5 +664,240 @@ for i := range chars {
 }
 ```
 
+## MCD (Massimo Comune Divisore)
 
-	
+Algoritmo di Euclide: il più efficiente.
+```go
+func MCD(a, b int) int {
+    for b != 0 {
+        a, b = b, a%b
+    }
+    return a
+}
+```
+
+## mcm (Minimo Comune Multiplo)
+
+Si calcola usando la formula: `(a * b) / MCD(a, b)`.
+```go
+func MCM(a, b int) int {
+    if a == 0 || b == 0 {
+        return 0
+    }
+    // MCD è la funzione definita sopra
+    return (a * b) / MCD(a, b)
+}
+```
+
+#### Fibonacci Iterativo
+
+Più efficiente di quello ricorsivo (O(n) invece di O(2n)), spesso richiesto per evitare stack overflow.
+```go
+func FibonacciIter(n int) int {
+    if n <= 1 {
+        return n
+    }
+    a, b := 0, 1
+    for i := 2; i <= n; i++ {
+        a, b = b, a+b
+    }
+    return b
+}
+```
+
+## Somma delle cifre di un numero
+
+Esempio: Input `123` -> Output `6` (1+2+3).
+```go
+func SumDigits(n int) int {
+    sum := 0
+    // Usiamo il valore assoluto se n può essere negativo
+    if n < 0 { n = -n }
+    
+    for n > 0 {
+        resto := n % 10 // Prende l'ultima cifra
+        sum += resto
+        n = n / 10      // Toglie l'ultima cifra
+    }
+    return sum
+}
+```
+
+#### Palindromo (Stringhe)
+
+Verifica se una stringa si legge uguale al contrario (es. "anna").
+```go
+func IsPalindrome(s string) bool {
+    // Convertiamo in rune per gestire caratteri speciali/accentati
+    runes := []rune(s) 
+    n := len(runes)
+    for i := 0; i < n/2; i++ {
+        if runes[i] != runes[n-1-i] {
+            return false
+        }
+    }
+    return true
+}
+```
+
+#### Minimo e Massimo in uno Slice
+
+Trovare min e max con un solo passaggio.
+```go
+func MinMax(arr []int) (int, int) {
+    if len(arr) == 0 {
+        return 0, 0 // Gestire caso vuoto come serve
+    }
+    min := arr[0]
+    max := arr[0]
+    
+    for _, v := range arr {
+        if v < min {
+            min = v
+        }
+        if v > max {
+            max = v
+        }
+    }
+    return min, max
+}
+```
+
+## Eliminare l'elemento all'indice `i` (Mantenendo l'ordine)
+
+```go
+func RemoveIndex(s []int, index int) []int {
+    // Prende tutto fino a i (escluso) e appende tutto da i+1 in poi
+    return append(s[:index], s[index+1:]...)
+}
+```
+
+## Eliminare l'elemento all'indice `i` (Veloce, senza ordine)
+
+```go
+func RemoveFast(s []int, i int) []int {
+    s[i] = s[len(s)-1] // Copia l'ultimo elemento al posto di quello da eliminare
+    return s[:len(s)-1] // Riduci la lunghezza di 1
+}
+```
+
+## Filtrare (Es. tenere solo i pari)
+
+```go
+func FilterEven(s []int) []int {
+    var result []int // Slice vuoto (nil)
+    // Oppure: result := make([]int, 0, len(s)) per efficienza
+    for _, v := range s {
+        if v%2 == 0 {
+            result = append(result, v)
+        }
+    }
+    return result
+}
+```
+
+## Ordinamento Personalizzato (Struct)
+
+```go
+import "sort"
+
+type Studente struct {
+    Nome string
+    Voto int
+}
+
+func main() {
+    classe := []Studente{
+        {"Mario", 24}, {"Luigi", 30}, {"Anna", 18},
+    }
+
+    // Ordina per Voto CRESCENTE
+    sort.Slice(classe, func(i, j int) bool {
+        return classe[i].Voto < classe[j].Voto
+    })
+
+    // Ordina per Voto DECRESCENTE
+    sort.Slice(classe, func(i, j int) bool {
+        return classe[i].Voto > classe[j].Voto
+    })
+}
+```
+
+## Matrici (Operazioni classiche)
+
+Le matrici (slice di slice) sono un classico.
+```go
+func SommaDiagonale(m [][]int) int {
+    sum := 0
+    // Assumiamo matrice quadrata N x N
+    for i := 0; i < len(m); i++ {
+        sum += m[i][i]
+    }
+    return sum
+}
+```
+
+## Somma Diagonale Secondaria
+
+La diagonale secondaria è dove riga + colonna == len-1.
+```go
+func SommaDiagonaleSec(m [][]int) int {
+    sum := 0
+    n := len(m)
+    for i := 0; i < n; i++ {
+        sum += m[i][n-1-i]
+    }
+    return sum
+}
+```
+
+## Conteggio frequenza caratteri (Istogramma)
+
+Fondamentale per verificare anagrammi o trovare la lettera più frequente.
+```go
+func ContaCaratteri(s string) map[rune]int {
+    conteggio := make(map[rune]int)
+    for _, char := range s {
+        conteggio[char]++
+    }
+    return conteggio
+}
+// Esempio uso: "banana" -> {'b':1, 'a':3, 'n':2}
+```
+
+## Cifrario di Cesare (Shift di lettere)
+
+Spesso chiedono di "spostare le lettere di k posizioni".
+```go
+func CaesarCipher(s string, k int) string {
+    runes := []rune(s)
+    for i, r := range runes {
+        if r >= 'a' && r <= 'z' {
+            // Logica: portiamo a base 0, shiftiamo, modulo 26, riportiamo a base 'a'
+            runes[i] = 'a' + (r-'a'+rune(k))%26
+        } else if r >= 'A' && r <= 'Z' {
+            runes[i] = 'A' + (r-'A'+rune(k))%26
+        }
+    }
+    return string(runes)
+}
+```
+
+## Anagramma
+
+Due stringhe sono anagrammi se hanno gli stessi caratteri nelle stesse quantità.
+```go
+func IsAnagram(s1, s2 string) bool {
+    if len(s1) != len(s2) { return false }
+    m1 := ContaCaratteri(s1) // Vedi funzione sopra
+    m2 := ContaCaratteri(s2)
+    
+    // reflect.DeepEqual(m1, m2) è lento, meglio il controllo manuale in esame:
+    for k, v := range m1 {
+        if m2[k] != v {
+            return false
+        }
+    }
+    return true
+}
+```
