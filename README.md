@@ -31,7 +31,7 @@ Esecuzione
 Documentazione
 `$ go doc nomecomando`
 
-`$ go test -run TestNome`
+`$ go test nomeEseguibile.go TestNome.go`
 
 
 ---
@@ -138,6 +138,7 @@ Tutti gli identificatori predefiniti sono definiti nel package [builtin](https:/
 var i int = 42
 var f float64 = float64(i)
 var u uint = uint(f)
+var r rune = []rune(stringa)[0]
 ```
 
 
@@ -372,6 +373,7 @@ Slice := strings.Split(s, “;”) //divide una stringa in slice ogni volta che 
 strings.Contains(s, “;”) //restituisce vero se la stringa s contiene il carattere ;
 string.Repeat(<variabile string>, <variabile int>) //restituisce una nuova stringa composta da un numero di coppie della variabile string (esempio se c’è a e 3 restituirà aaa)
 strings.Fields(<variabile string>) //elimina automaticamente gli spazi vuoti
+strings.TrimSpace(<variabile string>) //toglie gli spazi vuoti alla fine e all'inizio di una stringa
 ```
 
 ---
@@ -468,6 +470,18 @@ func SortRunes(a []rune) {
         a[i], a[indiceMin] = a[indiceMin], a[i]
     }
 }
+```
+## Lettura da un file di testo contenuto nella stessa cartella dell'eseguibile
+```go
+contenuto, err := os.ReadFile("dati.txt")
+if err != nil {
+    fmt.Println("Errore:", err)
+    return
+}
+// contenuto è []byte → lo trasformiamo in string
+testo := string(contenuto)
+fmt.Println("Contenuto del file:")
+fmt.Println(testo)
 ```
 ## Selezione di più stringhe da riga di comando
 ```go
