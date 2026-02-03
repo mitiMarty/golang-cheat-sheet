@@ -901,3 +901,160 @@ func IsAnagram(s1, s2 string) bool {
     return true
 }
 ```
+
+---
+# Snippet presi dalla simulazione d'esame
+
+### 1. Generazione di tutte le Sottostringhe
+
+Questo pattern (due cicli annidati) è fondamentale per esercizi che richiedono di trovare palindromi, sequenze ripetute o sottostringhe con proprietà specifiche.
+
+Dal file `esercizio_2.go`:
+
+```go
+// Genera tutte le sottostringhe possibili a partire da una stringa
+for i, c1 := range sequenza {
+    // Parte da i+1 per prendere il resto della stringa
+    for j, c2 := range sequenza[i+1:] {
+        // sequenza[i : i+j+2] è la sottostringa corrente
+        // (Nota: i+j+2 perché l'indice j è relativo alla slice accorciata, e l'estremo destro è esclusivo)
+        
+        // Esempio di utilizzo: controllo caratteri uguali inizio/fine
+        if c1 == c2 {
+            sottosequenze[sequenza[i:i+j+2]]++
+        }
+    }
+}
+
+```
+
+### 2. Iterare una Mappa in ordine (es. per lunghezza)
+
+Le mappe in Go non sono ordinate. Se l'esame chiede di stampare "dalla stringa più lunga alla più corta", non puoi usare un semplice `range`. Devi iterare sulla **proprietà** (la lunghezza) decrescendo.
+
+Dal file `esercizio_2.go`:
+
+```go
+// Itera partendo dalla lunghezza massima scendendo fino alla minima richiesta (es. 3)
+for lunghezza := lunghezzaMassima; lunghezza >= 3; lunghezza-- {
+    // Itera su tutta la mappa per trovare le chiavi che hanno quella lunghezza
+    for sequenza, occorrenze := range sottosequenze {
+        if len(sequenza) == lunghezza {
+            fmt.Printf("%s -> Occorrenze: %d\n", sequenza, occorrenze)
+        }
+    }
+}
+
+```
+
+### 3. Parsing di righe formattate (CSV) in Struct
+
+Snippet standard per leggere un file riga per riga dove i dati sono separati da `;` o virgole e caricarli in una struct. Utile per esercizi su gestione dati/file.
+
+Dal file `esercizio_3.go`:
+
+```go
+type Punto struct {
+    Nome string
+    X, Y float64
+}
+
+// Lettura e parsing
+scanner := bufio.NewScanner(os.Stdin)
+for scanner.Scan() {
+    if scanner.Text() != "" {
+        var p Punto
+        comando := strings.Split(scanner.Text(), ";") // Separa la stringa
+        
+        // Assegnazione e conversione
+        p.Nome = comando[0]
+        p.X, _ = strconv.ParseFloat(comando[1], 64) // Ignora errore per brevità (in esame gestiscilo se richiesto)
+        p.Y, _ = strconv.ParseFloat(comando[2], 64)
+
+        punti = append(punti, p)
+    }
+}
+
+```
+
+### 4. Precisione Numerica (Confronto Float)
+
+In esame i confronti diretti (`==`, `>`) tra float possono fallire per problemi di arrotondamento. Usa sempre una costante `EPSILON`.
+
+Dal file `esercizio_3.go`:
+
+```go
+const EPSILON = 1.0e-6
+
+func ÈXMaggioreDiY(x, y float64) bool {
+    return (x - y) > EPSILON
+}
+
+// Distanza Euclidea (Teorema di Pitagora)
+func Distanza(p1, p2 Punto) float64 {
+    dX := p1.X - p2.X
+    dY := p1.Y - p2.Y
+    return math.Sqrt(dX*dX + dY*dY)
+}
+
+```
+
+### 5. Algoritmo "Brute Force" con Maschere Binarie (Combinazioni)
+
+Questo è un pattern avanzato ma utilissimo per esercizi tipo "rimuovi N elementi per trovare il migliore". Usa la rappresentazione binaria per generare tutte le possibili combinazioni (o sottoinsiemi) di elementi.
+
+Dal file `esercizio_4.go`:
+
+```go
+// Genera tutte le combinazioni (maschere) da 0 a 2^len(n)
+for i := uint64(0); i < uint64(math.Pow(2, float64(len(n))))-1; i++ {
+    
+    // Converte il numero i in un array di bit (0 o 1)
+    bin := toBinary(i, len(n)) 
+    
+    // Itera sulla maschera binaria per decidere cosa tenere/buttare
+    for pos, val := range bin {
+        if val == 0 {
+            // Esempio: conta zeri (elementi da rimuovere)
+            count++
+        } else {
+            // Esempio: costruisci nuova stringa mantenendo l'elemento
+            nnew = nnew + string(n[pos])
+        }
+    }
+    // ... qui fai i controlli sulla combinazione generata
+}
+
+// Funzione di supporto per convertire intero in slice di bit
+func toBinary(n uint64, l int) []int {
+    bin := make([]int, l)
+    for i := l - 1; n > 0; i-- {
+        bin[i] = int(n % 2)
+        n = n / 2
+    }
+    return bin
+}
+
+```
+
+### 6. Alternanza logica con Modulo
+
+Utile per esercizi che chiedono di fare operazioni diverse in base alla posizione (pari/dispari) in un array o stringa.
+
+Dal file `esercizio_1.go`:
+
+```go
+// Esempio: Trasforma stringa alternando Maiuscolo/Minuscolo
+// partenza determina se iniziare Maiuscolo o Minuscolo in base alla posizione della parola
+partenza := posizione % 2 
+
+for i, c := range parola {
+    // (partenza+i)%2 crea un'alternanza continua anche tra parole diverse
+    if (partenza+i)%2 == 0 {
+        risultato += string(unicode.ToUpper(c))
+    } else {
+        risultato += string(unicode.ToLower(c))
+    }
+}
+
+```
