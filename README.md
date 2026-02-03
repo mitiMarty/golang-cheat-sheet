@@ -410,6 +410,39 @@ func main() {
 }
 ```
 
+### Fibonacci (Ricorsivo)
+
+La logica è:
+
+1. **Caso Base:** Se `n` è 0 o 1, restituisci `n`.
+    
+2. **Passo Ricorsivo:** Altrimenti, restituisci la somma di `Fib(n-1)` e `Fib(n-2)`.
+    
+
+```go
+package main
+
+import "fmt"
+
+// Funzione ricorsiva
+func Fibonacci(n int) int {
+    // Caso Base: condizione di arresto
+    if n <= 1 {
+        return n
+    }
+    // Passo Ricorsivo: chiamata a se stessa
+    return Fibonacci(n-1) + Fibonacci(n-2)
+}
+
+func main() {
+    // Esempio: stampiamo i primi 10 numeri della sequenza
+    for i := 0; i < 10; i++ {
+        fmt.Printf("%d ", Fibonacci(i))
+    }
+    // Output: 0 1 1 2 3 5 8 13 21 34 
+}
+```
+
 ---
 # Struct
 
@@ -548,13 +581,16 @@ x = *p //deferenziazione
 # Pezzi di codice che possono tornare utili 
 ## Numeri primi
 ```go
-func ÈPrimo(n int) bool {
-	for i:=2;i*i<=n;i++ {
-		if n%i==0{
-			return false
-		}
-	}
-	return true
+func IsPrimo(n int) bool {
+    if n < 2 {
+        return false
+    }
+    for i := 2; i*i <= n; i++ { // Ottimizzazione radice quadrata
+        if n%i == 0 {
+            return false
+        }
+    }
+    return true
 }
 ```
 
