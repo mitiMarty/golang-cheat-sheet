@@ -54,8 +54,7 @@ func main() {
 }
 ```
 
-
-
+---
 ## Operatori
 
 ### Aritmetici
@@ -101,6 +100,7 @@ func main() {
 | `*`       | dereferenzia un puntatore                    |
 | `<-`      | operatore di invio / ricezione (vedi Canali) |
 
+---
 ## Dichiarazioni
 
 Il tipo viene dopo l’identificatore.
@@ -130,7 +130,7 @@ complex64 complex128
 
 Tutti gli identificatori predefiniti sono definiti nel package [builtin](https://golang.org/pkg/builtin/).
 
-
+---
 
 ## Conversioni di tipo
 
@@ -141,8 +141,42 @@ var u uint = uint(f)
 var r rune = []rune(stringa)[0]
 ```
 
+---
+## Formattazione (fmt)
 
+```go
+import "fmt"
 
+fmt.Print("Testo senza a capo")
+fmt.Println("Testo con a capo finale")
+
+// Printf: Stampa formattata (NON va a capo da solo, serve \n)
+fmt.Printf("Il valore è %d\n", x)
+
+// Sprintf: Non stampa, ma crea una stringa formattata
+s := fmt.Sprintf("Risultato: %.2f", 10.555)
+```
+
+### Verbi principali per Printf
+
+|Simbolo|Descrizione|Esempio Input|Output|
+|---|---|---|---|
+|**Generici**||||
+|`%v`|Valore generico (ottimo se non ricordi il tipo)|`10` o `"ciao"`|`10`|
+|`%+v`|**Struct con nomi campi** (Salva-vita per il debug!)|`{X:1 Y:2}`|`{X:1 Y:2}`|
+|`%T`|Mostra il **Tipo** della variabile|`10`|`int`|
+|**Numeri**||||
+|`%d`|Intero (Base 10)|`123`|`123`|
+|`%f`|Float standard (6 decimali)|`10.5`|`10.500000`|
+|`%.2f`|Float arrotondato a 2 decimali|`10.567`|`10.57`|
+|`%t`|Booleano|`true`|`true`|
+|**Testo**||||
+|`%s`|Stringa semplice|`"ciao"`|`ciao`|
+|`%q`|Stringa "quotata" (con virgolette)|`"ciao"`|`"ciao"`|
+|`%c`|Rune (stampa il carattere dal codice numerico)|`65`|`A`|
+|`%p`|Puntatore (indirizzo di memoria)|`&x`|`0xc00...`|
+
+---
 ## Strutture di controllo
 
 ### If
@@ -215,10 +249,19 @@ a = append(a, 4)
 // Creare uno slice partendo da un array
 x := [3]string{"uno","due","tre"}
 s := x[:] // copia il contenuto di x in uno slice
+```
 
+### **Append**
+
+> **Attenzione:** `append` può cambiare l'indirizzo di memoria dello slice se supera la capacità. Bisogna sempre riassegnarlo alla variabile originale.
+
+```go
+s = append(s, nuovoElemento) // Corretto
+// append(s, nuovoElemento)  // SBAGLIATO (il risultato va perso)
 ```
 
 ## Matrici
+
 ```go
 M = make([][]int, nRighe) //alloca prima le righe
 for i := 0; i < nRighe; i++ {
@@ -226,16 +269,26 @@ for i := 0; i < nRighe; i++ {
 }
 M[riga][colonna] = valore //assegna un valore
 var a [3][2]int = [3][2]int{{1, 2}, {10, 20}, {100, 200}} //viene creata e vengono assegnati i valori
-
 ```
 
 ## Mappe
+
 ```go
 Var m map[string]int //dichiarazione
 m := make(map[string]int) //allocazione
 m["key"] = 42 //assegnazione di un valore
 v, ok = m[“key”] //leggo il valore nella variabile v, e la variabile di controllo ok è vera se quella chiave è stata associata ad un valore, falsa altrimenti
 delete(m, “key”) //elimina il valore contrassegnato dal nome key
+```
+
+### Iterazione
+
+> **Attenzione:** Quando usi `range` su una mappa, l'ordine è **casuale**. Non dare per scontato che stampi le chiavi in ordine alfabetico o di inserimento!
+
+```go
+for k, v := range mappa {
+    fmt.Println(k, v) // Ordine random
+}
 ```
 
 ---
@@ -336,6 +389,26 @@ func adder(args ...int) int {
 La funzione è invocata sempre nello stesso modo solo che ora puoi passare il numero di argomenti che vuoi.
 
 
+## Ricorsione
+
+Una funzione che chiama se stessa. **Importante:** Ricordarsi sempre il _caso base_ (condizione di uscita) altrimenti il programma va in loop infinito (stack overflow).
+
+```go
+// Esempio: Fattoriale (n!)
+// 5! = 5 * 4 * 3 * 2 * 1
+func Fattoriale(n int) int {
+    // 1. Caso Base: quando fermarsi
+    if n == 0 {
+        return 1
+    }
+    // 2. Passo Ricorsivo: chiamata a se stessa
+    return n * Fattoriale(n-1)
+}
+
+func main() {
+    fmt.Println(Fattoriale(5)) // Stampa 120
+}
+```
 
 ---
 # Struct
@@ -344,6 +417,34 @@ La funzione è invocata sempre nello stesso modo solo che ora puoi passare il nu
 type Vertex struct {
     X, Y float64
 }
+```
+
+## Metodi (Funzioni legate alle Struct)
+
+A differenza delle funzioni normali, il metodo ha un "ricevitore" (receiver) tra `func` e il nome.
+
+```go
+type Rettangolo struct {
+    Base, Altezza float64
+}
+
+// Metodo "Area" legato alla struct Rettangolo
+// (r Rettangolo) è il ricevitore. Qui è per VALORE (copia)
+func (r Rettangolo) Area() float64 {
+    return r.Base * r.Altezza
+}
+
+// Metodo che MODIFICA la struct
+// Qui serve il PUNTATORE (*Rettangolo) altrimenti modificherei solo una copia
+func (r *Rettangolo) RaddoppiaDimensioni() {
+    r.Base = r.Base * 2
+    r.Altezza = r.Altezza * 2
+}
+
+// Utilizzo
+r := Rettangolo{10, 5}
+fmt.Println(r.Area()) // 50
+r.RaddoppiaDimensioni() // Ora r è {20, 10}
 ```
 
 ---
@@ -471,6 +572,8 @@ func SortRunes(a []rune) {
     }
 }
 ```
+
+---
 ## Lettura da un file di testo contenuto nella stessa cartella dell'eseguibile
 ```go
 contenuto, err := os.ReadFile("dati.txt")
@@ -483,6 +586,18 @@ testo := string(contenuto)
 fmt.Println("Contenuto del file:")
 fmt.Println(testo)
 ```
+
+### Defer
+
+> Usalo subito dopo aver aperto un file per non dimenticarti di chiuderlo.
+
+```go
+f, err := os.Open("file.txt")
+if err != nil { return }
+defer f.Close() // Si chiuderà da solo alla fine della funzione
+```
+
+---
 ## Selezione di più stringhe da riga di comando
 ```go
 func main() {
