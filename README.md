@@ -661,5 +661,240 @@ for i := range chars {
 }
 ```
 
+## MCD (Massimo Comune Divisore)
 
-	
+Algoritmo di Euclide: il più efficiente.
+```go
+func MCD(a, b int) int {
+    for b != 0 {
+        a, b = b, a%b
+    }
+    return a
+}
+```
+
+## mcm (Minimo Comune Multiplo)
+
+Si calcola usando la formula: `(a * b) / MCD(a, b)`.
+```go
+func MCM(a, b int) int {
+    if a == 0 || b == 0 {
+        return 0
+    }
+    // MCD è la funzione definita sopra
+    return (a * b) / MCD(a, b)
+}
+```
+
+#### Fibonacci Iterativo
+
+Più efficiente di quello ricorsivo (O(n) invece di O(2n)), spesso richiesto per evitare stack overflow.
+```go
+func FibonacciIter(n int) int {
+    if n <= 1 {
+        return n
+    }
+    a, b := 0, 1
+    for i := 2; i <= n; i++ {
+        a, b = b, a+b
+    }
+    return b
+}
+```
+
+## Somma delle cifre di un numero
+
+Esempio: Input `123` -> Output `6` (1+2+3).
+```go
+func SumDigits(n int) int {
+    sum := 0
+    // Usiamo il valore assoluto se n può essere negativo
+    if n < 0 { n = -n }
+    
+    for n > 0 {
+        resto := n % 10 // Prende l'ultima cifra
+        sum += resto
+        n = n / 10      // Toglie l'ultima cifra
+    }
+    return sum
+}
+```
+
+#### Palindromo (Stringhe)
+
+Verifica se una stringa si legge uguale al contrario (es. "anna").
+```go
+func IsPalindrome(s string) bool {
+    // Convertiamo in rune per gestire caratteri speciali/accentati
+    runes := []rune(s) 
+    n := len(runes)
+    for i := 0; i < n/2; i++ {
+        if runes[i] != runes[n-1-i] {
+            return false
+        }
+    }
+    return true
+}
+```
+
+#### Minimo e Massimo in uno Slice
+
+Trovare min e max con un solo passaggio.
+```go
+func MinMax(arr []int) (int, int) {
+    if len(arr) == 0 {
+        return 0, 0 // Gestire caso vuoto come serve
+    }
+    min := arr[0]
+    max := arr[0]
+    
+    for _, v := range arr {
+        if v < min {
+            min = v
+        }
+        if v > max {
+            max = v
+        }
+    }
+    return min, max
+}
+```
+
+## Eliminare l'elemento all'indice `i` (Mantenendo l'ordine)
+
+```go
+func RemoveIndex(s []int, index int) []int {
+    // Prende tutto fino a i (escluso) e appende tutto da i+1 in poi
+    return append(s[:index], s[index+1:]...)
+}
+```
+
+## Eliminare l'elemento all'indice `i` (Veloce, senza ordine)
+
+```go
+func RemoveFast(s []int, i int) []int {
+    s[i] = s[len(s)-1] // Copia l'ultimo elemento al posto di quello da eliminare
+    return s[:len(s)-1] // Riduci la lunghezza di 1
+}
+```
+
+## Filtrare (Es. tenere solo i pari)
+
+```go
+func FilterEven(s []int) []int {
+    var result []int // Slice vuoto (nil)
+    // Oppure: result := make([]int, 0, len(s)) per efficienza
+    for _, v := range s {
+        if v%2 == 0 {
+            result = append(result, v)
+        }
+    }
+    return result
+}
+```
+
+## Ordinamento Personalizzato (Struct)
+
+```go
+import "sort"
+
+type Studente struct {
+    Nome string
+    Voto int
+}
+
+func main() {
+    classe := []Studente{
+        {"Mario", 24}, {"Luigi", 30}, {"Anna", 18},
+    }
+
+    // Ordina per Voto CRESCENTE
+    sort.Slice(classe, func(i, j int) bool {
+        return classe[i].Voto < classe[j].Voto
+    })
+
+    // Ordina per Voto DECRESCENTE
+    sort.Slice(classe, func(i, j int) bool {
+        return classe[i].Voto > classe[j].Voto
+    })
+}
+```
+
+## Matrici (Operazioni classiche)
+
+Le matrici (slice di slice) sono un classico.
+```go
+func SommaDiagonale(m [][]int) int {
+    sum := 0
+    // Assumiamo matrice quadrata N x N
+    for i := 0; i < len(m); i++ {
+        sum += m[i][i]
+    }
+    return sum
+}
+```
+
+## Somma Diagonale Secondaria
+
+La diagonale secondaria è dove riga + colonna == len-1.
+```go
+func SommaDiagonaleSec(m [][]int) int {
+    sum := 0
+    n := len(m)
+    for i := 0; i < n; i++ {
+        sum += m[i][n-1-i]
+    }
+    return sum
+}
+```
+
+## Conteggio frequenza caratteri (Istogramma)
+
+Fondamentale per verificare anagrammi o trovare la lettera più frequente.
+```go
+func ContaCaratteri(s string) map[rune]int {
+    conteggio := make(map[rune]int)
+    for _, char := range s {
+        conteggio[char]++
+    }
+    return conteggio
+}
+// Esempio uso: "banana" -> {'b':1, 'a':3, 'n':2}
+```
+
+## Cifrario di Cesare (Shift di lettere)
+
+Spesso chiedono di "spostare le lettere di k posizioni".
+```go
+func CaesarCipher(s string, k int) string {
+    runes := []rune(s)
+    for i, r := range runes {
+        if r >= 'a' && r <= 'z' {
+            // Logica: portiamo a base 0, shiftiamo, modulo 26, riportiamo a base 'a'
+            runes[i] = 'a' + (r-'a'+rune(k))%26
+        } else if r >= 'A' && r <= 'Z' {
+            runes[i] = 'A' + (r-'A'+rune(k))%26
+        }
+    }
+    return string(runes)
+}
+```
+
+## Anagramma
+
+Due stringhe sono anagrammi se hanno gli stessi caratteri nelle stesse quantità.
+```go
+func IsAnagram(s1, s2 string) bool {
+    if len(s1) != len(s2) { return false }
+    m1 := ContaCaratteri(s1) // Vedi funzione sopra
+    m2 := ContaCaratteri(s2)
+    
+    // reflect.DeepEqual(m1, m2) è lento, meglio il controllo manuale in esame:
+    for k, v := range m1 {
+        if m2[k] != v {
+            return false
+        }
+    }
+    return true
+}
+```
