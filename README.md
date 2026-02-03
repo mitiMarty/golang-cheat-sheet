@@ -365,10 +365,12 @@ type Vertex struct {
 strconv.Atoi(stringa) //prende in input una stringa e restituisce un valore intero e un valore di controllo, se la conversione è andata a buon fine è nil
 strconv.ParseFloat(stringa, precisione del float (32 o 64)) //trasforma una stringa in un valore float
 strconv.Itoa(intero) //prende in input un intero e restituisce una stringa
+strconv.FormatFloat(f, 'f', 2, 64) //trasforma un numero float in stringa, con due numeri dopo il punto
 ```
 ## Libreria: strings
 ```go
 S = strings.ToUpper(S) //rende la stringa tutta maiuscola
+S = strings.ToLower(S) //rende la stringa minuscola
 Slice := strings.Split(s, “;”) //divide una stringa in slice ogni volta che c’è un ;
 strings.Contains(s, “;”) //restituisce vero se la stringa s contiene il carattere ;
 string.Repeat(<variabile string>, <variabile int>) //restituisce una nuova stringa composta da un numero di coppie della variabile string (esempio se c’è a e 3 restituirà aaa)
@@ -427,6 +429,7 @@ unicode.IsSpace() //restituisce vero se la rune in input è uno spazio vuoto
 sort.Strings(s) //prende in input una slice di stringhe e la restituisce ordinata
 sort.Ints(i) //prende in input una slice di interi e la restituisce ordinata
 sort.Sort(sort.Reverse(sort.IntSlice(numeri))) //restituisce una slice in ordine decrescente
+
 ```
 ## reflect
 ```go
